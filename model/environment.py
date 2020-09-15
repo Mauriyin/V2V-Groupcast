@@ -41,5 +41,7 @@ class ENVIRONMENT(object):
 		return observation_, reward
 
 
-
-
+	def test_update(self, rb_leader, rb_member):
+		self.rb_leader = rb_leader
+		self.rb_member = rb_member
+		self.rb_hidden = rb_member
