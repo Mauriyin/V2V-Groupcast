@@ -4,9 +4,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 import os
-'''
-TODO: add DEBUG mode config
-'''
+
 DEBUG = False
 
 
@@ -24,7 +22,10 @@ def train(model,
             state.shape, q_target.shape))
         print("batchsize:{}".format(batch_size))
 
-    loss_fc = nn.MSELoss().cuda()
+    loss_fc = nn.MSELoss()
+    if torch.cuda.is_available():
+        loss_fc = nn.MSELoss().cuda()
+    
     optimizer = torch.optim.Adam(model.parameters(), lr=learningRate)
 
     # optimizer = torch.optim.SGD(
@@ -116,7 +117,10 @@ class DQN(nn.Module):
 
         # self.model = ResNet(self.state_size, self.n_actions).cuda()
         # self.target_model = ResNet(self.state_size, self.n_actions).cuda()
-        self.model = AllLinear(self.state_size, self.n_actions).cuda()
+        if torch.cuda.is_available():
+            self.model = AllLinear(self.state_size, self.n_actions).cuda()
+        else:
+            self.model = AllLinear(self.state_size, self.n_actions)
         # self.target_model = AllLinear(self.state_size, self.n_actions).cuda()
 
     def choose_action(self, state, action_index):
@@ -202,9 +206,14 @@ class DQN(nn.Module):
         reward = batch_memory[:, self.state_size + 1]
         next_state = batch_memory[:, -self.state_size:]
 
-        state = Variable(torch.from_numpy(state.astype(int))).float().cuda()
-        next_state = Variable(torch.from_numpy(
-            next_state.astype(int))).float().cuda()
+        if torch.cuda.is_available():
+            state = Variable(torch.from_numpy(state.astype(int))).float().cuda()
+            next_state = Variable(torch.from_numpy(
+                next_state.astype(int))).float().cuda()
+        else:
+            state = Variable(torch.from_numpy(state.astype(int))).float()
+            next_state = Variable(torch.from_numpy(
+                next_state.astype(int))).float()
 
         q_eval = self.model(state)  # state
         q_next = self.model(next_state)  # next state
@@ -212,8 +221,12 @@ class DQN(nn.Module):
         q_target = q_eval.clone()
 
         batch_index = np.arange(self.batch_size, dtype=np.int32)
-        q_target[batch_index, action] = torch.from_numpy(reward).float().cuda()\
-            + self.gamma * torch.max(q_next, axis=1)[0].float()
+        if torch.cuda.is_available():
+            q_target[batch_index, action] = torch.from_numpy(reward).float()\
+                .cuda() + self.gamma * torch.max(q_next, axis=1)[0].float()
+        else:
+            q_target[batch_index, action] = torch.from_numpy(reward).float()\
+                + self.gamma * torch.max(q_next, axis=1)[0].float()
 
         train(self.model,
               state,
