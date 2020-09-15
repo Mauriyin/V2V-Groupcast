@@ -133,6 +133,7 @@ dmypy.json
 # custom
 *.pkl
 output/
-
+p3/
+run*.ipynb
 # Pytorch
 *.pth
