@@ -134,6 +134,8 @@ dmypy.json
 *.pkl
 output/
 p3/
+p1/
 run*.ipynb
+*.npy
 # Pytorch
 *.pth
