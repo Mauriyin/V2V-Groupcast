@@ -12,7 +12,7 @@ for k in range(3):
     for density in range(10, 210, 10):
         Nv = density * 0.8
         N_ht = density * 0.1
-        P_single = (200 - density * 0.4 - 1) / (200 - density * 0.4)
+        # P_single = (200 - density * 0.4 - 1) / (200 - density * 0.4)
         pc = 1 - (1 - p[k] / (Ts * 200))**(Nv - 1)
         col_prob_analy[k][i] = 1 - (1 - pc) * P_single**N_ht
         i = i + 1
