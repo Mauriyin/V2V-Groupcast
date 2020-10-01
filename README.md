@@ -1,2 +1,2 @@
 # V2V Communication:
-### Data
+Using DRL for the V2V groupcast resource allocation.
