@@ -5,3 +5,4 @@ Using DRL for the V2V groupcast resource allocation.
 Action set  
 Q value  
 observation: $o_n \in \{ACK,NACK\}$
+state = {{o_i, a_i}, ...,{o_n, a_n}}
